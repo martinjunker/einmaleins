@@ -11,7 +11,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
 
 @Route(value = "hello")
-@RouteAlias(value = "")
 @PageTitle("Hello World")
 public class HelloWorldView extends HorizontalLayout {
 
