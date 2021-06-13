@@ -1,54 +1,62 @@
 package de.h2cl.einmaleins.gx;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
 
 import de.h2cl.einmaleins.domain.Game;
+import de.h2cl.einmaleins.domain.GameRepository;
 import de.h2cl.einmaleins.domain.Person;
+import de.h2cl.einmaleins.domain.PersonRepository;
+import de.h2cl.einmaleins.domain.TitleRepository;
 
-public class GameExchangeImpl implements GameExchange, Serializable {
+@Component
+@AllArgsConstructor
+public class GameExchangeImpl implements GameExchange {
 
-    private final List<Person> persons = new ArrayList<>();
-    private final List<Game> games = new ArrayList<>();
-    private final Map<Game, Person> borrower = new HashMap<>();
+    private final TitleRepository borrower;
+    private final GameRepository games;
+    private final PersonRepository persons;
 
     @Override
-    public void addPerson(final Person person) {
-        persons.add(person);
+    public void borrowGameTo(final String gameId, final String borrowerId) {
+        games.updateBorrowerId(gameId, borrowerId);
     }
 
     @Override
-    public List<Person> getPersons() {
-        return persons;
+    public void giveGameBack(final Game game) {
+        borrower.deleteById(game.getId());
     }
 
     @Override
-    public void addGame(final Game game) {
-        games.add(game);
+    public Optional<String> borrowerOfGame(final Game game) {
+        return games.findById(game.getId()).map(Game::getBorrowerId);
     }
 
     @Override
-    public List<Game> getGames() {
-        return games;
+    public List<Game> findGamesToBorrow(String ownerId) {
+        return games.findAllByOwnerIdNotLike(ownerId)
+                .stream()
+                .filter(game -> borrower.findById(game.getId()).isEmpty())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void borrowGameTo(final Game game, final Person borrowerWish) {
-        borrower.put(game, borrowerWish);
+    public List<Game> findGamesByOwnerOrBorrower(String personId) {
+        return games.findAllByOwnerIdOrBorrowerId(personId);
     }
 
     @Override
-    public boolean giveGameBack(final Game game) {
-        //TODO
-        return false;
+    public Optional<Person> findPerson(final String id) {
+        return persons.findById(id);
     }
 
     @Override
-    public Optional<Person> borrowerOfGame(final Game game) {
-        return Optional.ofNullable(borrower.get(game));
+    public void removeGame(final String id) {
+        games.deleteById(id);
     }
 }

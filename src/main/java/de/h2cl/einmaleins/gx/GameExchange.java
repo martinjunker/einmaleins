@@ -1,31 +1,29 @@
 package de.h2cl.einmaleins.gx;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
 import de.h2cl.einmaleins.domain.Game;
 import de.h2cl.einmaleins.domain.Person;
 
-public interface GameExchange extends Serializable {
+public interface GameExchange {
 
-    void addPerson(Person person);
-
-    List<Person> getPersons();
-
-    void addGame(Game game);
-
-    List<Game> getGames();
-
-    void borrowGameTo(Game game, Person borrower);
+    void borrowGameTo(String gameId, String borrowerId);
 
     /**
      * Give a borrowed Game back to the owner
      *
      * @param game The game that's given back
-     * @return true if was borrowed and is now returned to owner
      */
-    boolean giveGameBack(Game game);
+    void giveGameBack(Game game);
 
-    Optional<Person> borrowerOfGame(Game game);
+    Optional<String> borrowerOfGame(Game game);
+
+    List<Game> findGamesToBorrow(String ownerId);
+
+    List<Game> findGamesByOwnerOrBorrower(String personId);
+
+    Optional<Person> findPerson(String id);
+
+    void removeGame(String id);
 }

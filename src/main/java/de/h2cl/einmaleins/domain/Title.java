@@ -15,10 +15,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person implements Serializable {
+public class Title implements Serializable {
 
     @Id
     private String id;
-    private String name;
 
+    private String name;
+    private String imgUrl;
 }
