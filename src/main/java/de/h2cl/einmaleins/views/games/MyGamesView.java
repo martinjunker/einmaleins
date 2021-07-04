@@ -47,7 +47,8 @@ public class MyGamesView extends VerticalLayout {
         grid.setHeightFull();
         grid.setItems(getRelatedGames());
         grid.addComponentColumn(game -> createImage(game.getImageUrl(), "image of " + game.getName()));
-        grid.addColumn(Game::getName).setSortable(true).setHeader("Name");
+        grid.addColumn(game -> gameExchange.
+                //Game::getName).setSortable(true).setHeader("Name");
         grid.addColumn(g ->
                 gameExchange.findPerson(g.getOwnerId())
                         .map(Person::getName)

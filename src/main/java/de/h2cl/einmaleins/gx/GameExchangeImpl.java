@@ -12,13 +12,14 @@ import de.h2cl.einmaleins.domain.Game;
 import de.h2cl.einmaleins.domain.GameRepository;
 import de.h2cl.einmaleins.domain.Person;
 import de.h2cl.einmaleins.domain.PersonRepository;
+import de.h2cl.einmaleins.domain.Title;
 import de.h2cl.einmaleins.domain.TitleRepository;
 
 @Component
 @AllArgsConstructor
 public class GameExchangeImpl implements GameExchange {
 
-    private final TitleRepository borrower;
+    private final TitleRepository titles;
     private final GameRepository games;
     private final PersonRepository persons;
 
@@ -29,7 +30,8 @@ public class GameExchangeImpl implements GameExchange {
 
     @Override
     public void giveGameBack(final Game game) {
-        borrower.deleteById(game.getId());
+        game.setBorrowerId(null);
+        games.save(game);
     }
 
     @Override
@@ -51,12 +53,16 @@ public class GameExchangeImpl implements GameExchange {
     }
 
     @Override
-    public Optional<Person> findPerson(final String id) {
-        return persons.findById(id);
+    public Optional<Person> findPerson(final String personId) {
+        return persons.findById(personId);
     }
 
     @Override
-    public void removeGame(final String id) {
-        games.deleteById(id);
+    public void removeGame(final String gameId) {
+        games.deleteById(gameId);
+    }
+
+    public Optional<Title> loadTitleOfGame(final String titleId) {
+        return titles.findById(titleId);
     }
 }
